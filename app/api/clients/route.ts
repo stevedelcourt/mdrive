@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAdmin, hashPassword, generateId } from '@/lib/auth';
-import { listClients, getClientMeta, setClientMeta, deleteClientSpace, renameClientSpace } from '@/lib/sftp';
+import { verifyAdmin, hashPassword } from '@/lib/auth';
+import { listClients, getClientMeta, setClientMeta, deleteClientSpace } from '@/lib/storage';
 import { ClientSpace } from '@/lib/types';
 
 export async function GET(request: NextRequest) {
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
         clientsWithMeta.push({
           id: clientId,
           name: meta.name,
-          password: '', // Don't send password hash
+          password: '',
           createdAt: meta.createdAt,
           validatedFiles: meta.validatedFiles,
         });
@@ -51,7 +51,6 @@ export async function POST(request: NextRequest) {
     const cleanName = name.toLowerCase().replace(/[^a-z0-9-_]/g, '_');
     let clientId = cleanName;
     
-    // Handle duplicate names
     let counter = 1;
     while (existingClients.includes(clientId)) {
       clientId = `${cleanName}_${counter}`;

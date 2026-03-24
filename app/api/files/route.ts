@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdmin } from '@/lib/auth';
-import { listFiles, uploadFile, deleteFile, downloadFile, validateFile, getClientMeta } from '@/lib/sftp';
+import { listFiles, uploadFile, deleteFile, downloadFile, validateFile, getClientMeta } from '@/lib/storage';
 
 export async function GET(request: NextRequest) {
   const adminKey = request.headers.get('x-admin-key');
@@ -9,7 +9,6 @@ export async function GET(request: NextRequest) {
   const fileName = searchParams.get('fileName');
   const action = searchParams.get('action');
 
-  // Client file download
   if (action === 'download' && spaceId && fileName) {
     try {
       const clientKey = request.headers.get('x-client-key');
@@ -26,14 +25,18 @@ export async function GET(request: NextRequest) {
         'png': 'image/png',
         'gif': 'image/gif',
         'webp': 'image/webp',
+        'svg': 'image/svg+xml',
         'mp4': 'video/mp4',
         'webm': 'video/webm',
         'mov': 'video/quicktime',
+        'avi': 'video/x-msvideo',
         'pdf': 'application/pdf',
         'doc': 'application/msword',
         'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'txt': 'text/plain',
         'md': 'text/markdown',
+        'psd': 'image/vnd.adobe.photoshop',
+        'ai': 'application/postscript',
       };
 
       return new NextResponse(buffer, {
@@ -47,12 +50,10 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Admin check for other operations
   if (!adminKey) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   }
 
-  // List files
   if (request.method === 'GET' && spaceId) {
     try {
       const files = await listFiles(spaceId);
@@ -82,12 +83,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Space ID and file required' }, { status: 400 });
     }
 
-    // Client can only upload to their own space
     if (clientKey && clientKey !== spaceId) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check file size (1GB = 1073741824 bytes)
     if (file.size > 1073741824) {
       return NextResponse.json({ success: false, error: 'File too large (max 1GB)' }, { status: 400 });
     }

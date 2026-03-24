@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdmin } from '@/lib/auth';
-import { getClientMeta } from '@/lib/sftp';
+import { getClientMeta } from '@/lib/storage';
 
 export async function POST(request: NextRequest) {
   try {
