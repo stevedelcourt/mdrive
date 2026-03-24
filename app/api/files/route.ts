@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
         'ai': 'application/postscript',
       };
 
-      return new NextResponse(buffer, {
+      return new Response(new Uint8Array(buffer), {
         headers: {
           'Content-Type': mimeTypes[ext] || 'application/octet-stream',
           'Content-Disposition': `attachment; filename="${fileName}"`,
