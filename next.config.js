@@ -11,6 +11,8 @@ const nextConfig = {
       bodySizeLimit: '2GB',
     },
   },
+  serverComponentsExternalPackages: [],
+  modularizeImports: undefined,
 };
 
 module.exports = nextConfig;
