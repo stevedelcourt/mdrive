@@ -131,10 +131,11 @@ export default function AdminPage() {
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement> | React.DragEvent) => {
     if (!selectedClient) return;
-    const files = 'dataTransfer' in e ? e.dataTransfer.files : e.target.files;
-    if (!files?.length) return;
+    const fileList = 'dataTransfer' in e ? e.dataTransfer.files : e.target.files;
+    if (!fileList?.length) return;
 
     setUploading(true);
+    const files = Array.from(fileList);
     for (const file of files) {
       const formData = new FormData();
       formData.append('spaceId', selectedClient.id);

@@ -73,11 +73,12 @@ export default function ClientSpacePage() {
   };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement> | React.DragEvent) => {
-    const fileList = 'dataTransfer' in e ? e.dataTransfer.files : e.target.files;
-    if (!fileList?.length) return;
+    const rawFiles = 'dataTransfer' in e ? e.dataTransfer.files : e.target.files;
+    if (!rawFiles?.length) return;
 
     setUploading(true);
-    for (const file of fileList) {
+    const files = Array.from(rawFiles);
+    for (const file of files) {
       const formData = new FormData();
       formData.append('spaceId', spaceId);
       formData.append('file', file);
